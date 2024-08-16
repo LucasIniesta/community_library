@@ -8,23 +8,15 @@
   //Callback functions => Onde executamos o backend (lógica, regras de negócio, etc)
 
 import express from "express"
+import userRouters from './src/routes/user.routes.js'
+
 
 const app = express();
 const users = []
 
 app.use(express.json())
+app.use(userRouters)
 
-app.post("/users", (req, res) => {
-  const body = req.body
-  users.push(body)
-  res.status(201).send("Usuário criado com sucesso")
-});
-
-app.get("/users", (req, res) =>{
-  res.json({users})
-// Entre chaves é a maneira mais correta de responder ao cliente.
-})
-
-  app.listen(3000, () => {
+app.listen(3000, () => {
   console.log("Server is running on port 3000")
 }); 
