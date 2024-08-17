@@ -50,7 +50,86 @@ function findUserByEmailRepository(email) {
     }) 
 }
 
+function findUserByIdRepository(id) {
+    return new Promise ((res, rej) => {
+        db.get(`
+                SELECT id, username, email, avatar 
+                FROM users
+                WHERE id = ?
+                ` , 
+                [id] , 
+                (err, row) => {
+                    if (err){
+                        rej(err)
+                    } else {
+                        res(row)
+                    }
+                }
+            )
+    }) 
+}
+
+function findAllUserRepository(){
+    return new Promise((res, rej) =>{
+        db.all(`
+                SELECT id, username, email, avatar FROM users
+            `, 
+            [], 
+            (err,rows) => {
+                if(err){
+                    rej(err)
+                } else {
+                    res(rows)
+                }
+            })
+    })
+}
+
+function updateUserRepository(id, user) {
+    return new Promise ((res, rej) => {
+        const {username, email, password, avatar} = user
+        db.run(`
+                UPDATE users SET
+                    username = ?, 
+                    email = ?, 
+                    password = ?, 
+                    avatar = ?
+                WHERE id = ?
+                ` , 
+                [username, email, password, avatar, id] , 
+                (err) => {
+                    if (err){
+                        rej(err)
+                    } else {
+                        res({id, ...user})
+                    }
+                }
+            )
+    }) 
+}
+
+function deleteUserRepository(id){
+    return new Promise((res, rej) => {
+        db.run(`
+                DELETE FROM users
+                WHERE id = ?
+            `, 
+            [id], 
+            (err) =>{
+                if(err){
+                    rej(err)
+                } else {
+                    res({message: "User deleted successfully", id})
+                }
+            })
+    })
+}
+
 export default {
     createUserRepository, 
-    findUserByEmailRepository
+    findUserByEmailRepository,
+    findAllUserRepository,
+    findUserByIdRepository,
+    updateUserRepository,
+    deleteUserRepository
 }
